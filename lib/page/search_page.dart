@@ -4,21 +4,15 @@ import 'package:restaurant_app/common/resto_provider.dart';
 import 'package:restaurant_app/common/styles.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/widget/restaurant_list_page.dart';
-
-// class SearchPage extends StatefulWidget {
-//   static const routeName = '/search_page';
-
-//   @override
-//   _SearchPageState createState() => _SearchPageState();
-// }
+import 'package:restaurant_app/widget/restaurant_search_list_page.dart';
 
 class SearchPage extends StatelessWidget {
   static const routeName = '/search_page';
   final _searchController = TextEditingController();
-  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
+    String _searchQuery = '';
     return Scaffold(
       body: SafeArea(
         child: ChangeNotifierProvider<RestaurantProvider>(
@@ -49,7 +43,6 @@ class SearchPage extends StatelessWidget {
                         elevation: 5,
                         borderRadius: BorderRadius.all(Radius.circular(30)),
                         child: TextField(
-                          // onChanged: (value) => state.setQuery(value),
                           controller: _searchController,
                           cursorColor: primaryColor,
                           decoration: InputDecoration(
@@ -66,8 +59,8 @@ class SearchPage extends StatelessWidget {
                                 icon: Icon(Icons.search),
                                 splashRadius: 30.0,
                                 color: Colors.black,
-                                onPressed: () => state
-                                    .setQuery(_searchController.text),
+                                onPressed: () =>
+                                    state.setQuery(_searchController.text),
                               ),
                             ),
                           ),
@@ -76,7 +69,11 @@ class SearchPage extends StatelessWidget {
                       SizedBox(
                         height: 16,
                       ),
-                      Flexible(child: RestaurantListPage(_searchQuery)),
+                      Flexible(
+                          child: _searchController.text.isEmpty
+                              ? RestaurantListPage()
+                              : RestaurantSearchListPage(
+                                  searchQuery: _searchQuery)),
                     ],
                   ),
                 );

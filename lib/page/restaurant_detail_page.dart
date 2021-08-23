@@ -81,136 +81,112 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
             height: 32,
           ),
           Flexible(
-              flex: 2,
-              child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            flex: 2,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    restaurantDetail.name,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
+                  Row(
                     children: [
-                      Text(
-                        restaurantDetail.name,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.start,
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 14,
                       ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 14,
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Text(
-                            restaurantDetail.rating.toString(),
-                            style: Theme.of(context).textTheme.bodyText2,
-                          ),
-                        ],
-                      )
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        restaurantDetail.rating.toString(),
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
                     ],
-                  ))),
+                  )
+                ],
+              ),
+            ),
+          ),
           SizedBox(
             height: 8,
           ),
           Flexible(
-              flex: 2,
-              child: Container(
-                width: pageWidth,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Icon(
-                      Icons.location_on_rounded,
-                      color: Colors.red,
-                      size: 14,
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      '${restaurantDetail.city} City',
-                      style: Theme.of(context).textTheme.bodyText2,
-                    ),
-                  ],
-                ),
-              )),
+            flex: 2,
+            child: Container(
+              width: pageWidth,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(
+                    Icons.location_on_rounded,
+                    color: Colors.red,
+                    size: 14,
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Text(
+                    '${restaurantDetail.city} City',
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ],
+              ),
+            ),
+          ),
           SizedBox(
             height: 24,
           ),
           Flexible(
-              flex: 1,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Description',
-                  style: Theme.of(context).textTheme.subtitle1,
-                  textAlign: TextAlign.start,
-                ),
-              )),
+            flex: 1,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Description',
+                style: Theme.of(context).textTheme.subtitle1,
+                textAlign: TextAlign.start,
+              ),
+            ),
+          ),
           SizedBox(
             height: 8,
           ),
           Flexible(
-              flex: 4,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  restaurantDetail.description,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 4,
-                  style: Theme.of(context).textTheme.bodyText2,
-                  textAlign: TextAlign.justify,
-                ),
-              )),
+            flex: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                restaurantDetail.description,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 4,
+                style: Theme.of(context).textTheme.bodyText2,
+                textAlign: TextAlign.justify,
+              ),
+            ),
+          ),
           SizedBox(
             height: 32,
           ),
           Flexible(
-              flex: 1,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Foods Menu',
-                  style: Theme.of(context).textTheme.subtitle2,
-                  textAlign: TextAlign.start,
-                ),
-              )),
-          SizedBox(
-            height: 8,
+            flex: 1,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Foods Menu',
+                style: Theme.of(context).textTheme.subtitle2,
+                textAlign: TextAlign.start,
+              ),
+            ),
           ),
-          Flexible(
-              flex: 3,
-              child: Center(
-                child: Container(
-                  width: pageWidth,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: restaurantDetail.menus.foods.length,
-                      itemBuilder: (context, index) {
-                        return menuCardWidget(restaurantDetail, index, isFood = true);
-                      }),
-                ),
-              )),
-          SizedBox(
-            height: 8,
-          ),
-          Flexible(
-              flex: 1,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Drinks Menu',
-                  style: Theme.of(context).textTheme.subtitle2,
-                  textAlign: TextAlign.start,
-                ),
-              )),
           SizedBox(
             height: 8,
           ),
@@ -222,10 +198,44 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: restaurantDetail.menus.drinks.length,
+                    itemCount: restaurantDetail.menus.foods.length,
                     itemBuilder: (context, index) {
-                      return menuCardWidget(restaurantDetail, index, isFood = false);
-                    },
+                      return menuCardWidget(
+                          restaurantDetail, index, isFood = true);
+                    }),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Flexible(
+            flex: 1,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Drinks Menu',
+                style: Theme.of(context).textTheme.subtitle2,
+                textAlign: TextAlign.start,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          Flexible(
+            flex: 3,
+            child: Center(
+              child: Container(
+                width: pageWidth,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: restaurantDetail.menus.drinks.length,
+                  itemBuilder: (context, index) {
+                    return menuCardWidget(
+                        restaurantDetail, index, isFood = false);
+                  },
                 ),
               ),
             ),
@@ -234,7 +244,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
       ),
     );
   }
-
-  menuCardWidget(restaurantDetail, index, isFood) => MenuCardWidget(restaurantDetail: restaurantDetail,
-      index: index, isFood: isFood);
+  menuCardWidget(restaurantDetail, index, isFood) => MenuCardWidget(
+      restaurantDetail: restaurantDetail, index: index, isFood: isFood);
 }

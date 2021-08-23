@@ -16,11 +16,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Restaurant App',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.white,
-              elevation: 0,
-
-        ),
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.white,
+            elevation: 0,
+          ),
           primaryColor: primaryColor,
           accentColor: secondaryColor,
           scaffoldBackgroundColor: Colors.white,

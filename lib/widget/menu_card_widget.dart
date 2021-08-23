@@ -10,34 +10,37 @@ class MenuCardWidget extends StatelessWidget {
   final bool isFood;
 
   MenuCardWidget(
-      {required this.isFood, required this.index, required this.restaurantDetail});
+      {required this.isFood,
+      required this.index,
+      required this.restaurantDetail});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: cardSize,
-        width: cardSize,
-        child: Card(
-            elevation: 2,
-            color: secondaryColor,
-            child: Center(
-              child: isFood
-                  ? Text(
-                      restaurantDetail.menus.foods[index].name,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.button!.apply(
-                            color: Colors.white,
-                          ),
-                    )
-                  : Text(
-                      restaurantDetail.menus.drinks[index].name,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context)
-                          .textTheme
-                          .button!
-                          .apply(color: Colors.white),
-                    ),
-            )),
-      );
+      height: cardSize,
+      width: cardSize,
+      child: Card(
+        elevation: 2,
+        color: secondaryColor,
+        child: Center(
+          child: isFood
+              ? Text(
+                  restaurantDetail.menus.foods[index].name,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.button!.apply(
+                        color: Colors.white,
+                      ),
+                )
+              : Text(
+                  restaurantDetail.menus.drinks[index].name,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .button!
+                      .apply(color: Colors.white),
+                ),
+        ),
+      ),
+    );
   }
 }
