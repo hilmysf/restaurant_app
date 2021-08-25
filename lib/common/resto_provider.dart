@@ -1,14 +1,16 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant_model.dart';
 import 'package:restaurant_app/data/model/restaurant_search_model.dart';
 
-enum ResultState { Loading, NoData, HasData, Error }
+enum ResultState { Loading, NoData, HasData, Error, NoConnection}
 
 class RestaurantProvider extends ChangeNotifier {
   final ApiService apiService;
+  final BuildContext context;
 
-  RestaurantProvider({required this.apiService}) {
+  RestaurantProvider(this.apiService, this.context) {
     _fetchAllRestaurant();
   }
 
@@ -36,9 +38,16 @@ class RestaurantProvider extends ChangeNotifier {
 
   Future<dynamic> _fetchAllRestaurant() async {
     try {
+      var result = await Connectivity().checkConnectivity();
       _state = ResultState.Loading;
       notifyListeners();
       final resto = await getRestaurantData();
+
+      if(result == ConnectivityResult.none){
+        _state = ResultState.NoConnection;
+        notifyListeners();
+        return _message = 'No Internet Connection';
+      }
       if (resto.restaurants.isEmpty) {
         _state = ResultState.NoData;
         notifyListeners();

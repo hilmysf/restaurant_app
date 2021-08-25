@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
               Flexible(
                   child: ChangeNotifierProvider<RestaurantProvider>(
                       create: (_) =>
-                          RestaurantProvider(apiService: ApiService()),
+                          RestaurantProvider(ApiService(), context),
                       child: RestaurantListPage())),
             ],
           ),

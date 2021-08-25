@@ -1,4 +1,7 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/styles.dart';
 import 'package:restaurant_app/data/model/restaurant_model.dart';
 import 'package:restaurant_app/page/home_page.dart';
@@ -13,7 +16,11 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+        providers: [
+          StreamProvider(create: (context) => Connectivity().onConnectivityChanged, initialData: null,),
+        ],
+        child: MaterialApp(
       title: 'Restaurant App',
       theme: ThemeData(
           appBarTheme: AppBarTheme(
@@ -35,6 +42,6 @@ class MyApp extends StatelessWidget {
                 ModalRoute.of(context)?.settings.arguments as Restaurant),
         SearchPage.routeName: (context) => SearchPage()
       },
-    );
+    ));
   }
 }

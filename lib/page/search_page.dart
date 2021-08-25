@@ -16,7 +16,7 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: ChangeNotifierProvider<RestaurantProvider>(
-          create: (_) => RestaurantProvider(apiService: ApiService()),
+          create: (_) => RestaurantProvider(ApiService(), context),
           child: Consumer<RestaurantProvider>(
             builder: (context, state, _) {
               if (state.state == ResultState.Loading) {

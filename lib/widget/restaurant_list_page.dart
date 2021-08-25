@@ -1,7 +1,9 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/resto_provider.dart';
+import 'package:restaurant_app/widget/Utils.dart';
 import 'list_item.dart';
 
 class RestaurantListPage extends StatelessWidget {
@@ -27,6 +29,8 @@ class RestaurantListPage extends StatelessWidget {
         } else if (state.state == ResultState.NoData) {
           return Center(child: Text(state.message));
         } else if (state.state == ResultState.Error) {
+          return Center(child: Text(state.message));
+        } else if (state.state == ResultState.NoConnection) {
           return Center(child: Text(state.message));
         } else {
           return Center(
