@@ -1,10 +1,10 @@
-import 'package:connectivity/connectivity.dart';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant_model.dart';
 import 'package:restaurant_app/data/model/restaurant_search_model.dart';
+import 'package:restaurant_app/utils/result_state.dart';
 
-enum ResultState { Loading, NoData, HasData, Error, NoConnection}
 
 class RestaurantProvider extends ChangeNotifier {
   final ApiService apiService;
@@ -30,6 +30,11 @@ class RestaurantProvider extends ChangeNotifier {
 
   String get query => _query;
 
+  void refresh() {
+    _fetchAllRestaurant();
+    notifyListeners();
+  }
+
   void setQuery(String query) {
     _query = query;
     _fetchAllRestaurant();
@@ -38,16 +43,9 @@ class RestaurantProvider extends ChangeNotifier {
 
   Future<dynamic> _fetchAllRestaurant() async {
     try {
-      var result = await Connectivity().checkConnectivity();
       _state = ResultState.Loading;
       notifyListeners();
       final resto = await getRestaurantData();
-
-      if(result == ConnectivityResult.none){
-        _state = ResultState.NoConnection;
-        notifyListeners();
-        return _message = 'No Internet Connection';
-      }
       if (resto.restaurants.isEmpty) {
         _state = ResultState.NoData;
         notifyListeners();
@@ -62,9 +60,15 @@ class RestaurantProvider extends ChangeNotifier {
         }
       }
     } catch (e) {
-      _state = ResultState.Error;
-      notifyListeners();
-      return _message = 'Error --> $e';
+      if (e is SocketException) {
+        _state = ResultState.NoConnection;
+        notifyListeners();
+        return _message = 'No Internet Connection';
+      } else {
+        _state = ResultState.Error;
+        notifyListeners();
+        return _message = 'Error --> $e';
+      }
     }
   }
 

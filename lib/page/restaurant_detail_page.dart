@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant_model.dart';
 import 'package:restaurant_app/data/model/restaurant_detail_model.dart';
+import 'package:restaurant_app/data/provider/resto_detail_provider.dart';
+import 'package:restaurant_app/utils/result_state.dart';
 import 'package:restaurant_app/widget/menu_card_widget.dart';
+import 'package:restaurant_app/widget/no_internet_widget.dart';
 
 class RestaurantDetailPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -15,95 +19,100 @@ class RestaurantDetailPage extends StatefulWidget {
 }
 
 class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
-  Future<RestaurantDetailResult>? _restaurantDetail;
   bool isFood = true;
   late RestaurantDetail restaurantDetail;
 
   @override
-  void initState() {
-    super.initState();
-    _restaurantDetail = ApiService().restaurantDetail(widget.restaurant.id);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return _buildDetail(context);
+    return Scaffold(
+      body: ChangeNotifierProvider<RestaurantDetailProvider>(
+          create: (_) =>
+              RestaurantDetailProvider(ApiService(), id: widget.restaurant.id),
+          child: _buildDetail(context)),
+    );
   }
 
   Widget _buildDetail(BuildContext context) {
-    return FutureBuilder(
-      future: _restaurantDetail,
-      builder: (context, AsyncSnapshot<RestaurantDetailResult> snapshot) {
-        var state = snapshot.connectionState;
-        if (state != ConnectionState.done) {
+    return Consumer<RestaurantDetailProvider>(
+      builder: (context, state, _) {
+        if (state.state == ResultState.Loading) {
           return Center(child: CircularProgressIndicator());
-        } else if (state == ConnectionState.none) {
+        } else if (state.state == ResultState.HasData) {
+          var restaurantDetail = state.restaurantDetailResult!.restaurant;
+          return _buildDetailPage(context, restaurantDetail);
+        } else if (state.state == ResultState.Error) {
+          return Center(child: Text(state.message));
+        } else if (state.state == ResultState.NoData) {
+          return Center(child: Text(state.message));
+        } else if (state.state == ResultState.NoConnection) {
+          return noInternetConnection(context, state);
+        } else {
           return Center(
-            child: Column(children: [
-              Icon(Icons.wifi_off, size: 48,),
-              SizedBox(height: 48,),
-              Text('No Internet Connection',
-                style: TextStyle(color: Colors.black),),
-              SizedBox(height: 16,),
-              Text(
-                'You are not connected to the internet.\n Make Sure Wi-fi is on, Airplane Mode is off\n and try again.',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .caption,),
-
-            ],),
+            child: Text(''),
           );
-        }
-        else {
-          if (snapshot.hasData) {
-            var restaurantDetail = snapshot.data!.restaurant;
-            return _buildDetailPage(context, restaurantDetail);
-          } else if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          } else {
-            return Text('');
-          }
         }
       },
     );
   }
 
-  Widget _buildDetailPage(BuildContext context,
-      RestaurantDetail restaurantDetail) {
-    var pageWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    var pageHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+  Widget _buildDetailPage(
+      BuildContext context, RestaurantDetail restaurantDetail) {
+    var pageWidth = MediaQuery.of(context).size.width;
+    var pageHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Hero(
-            tag: restaurantDetail.pictureId,
-            child: Container(
-              height: pageHeight / 3,
-              width: pageWidth,
-              decoration: BoxDecoration(
-                borderRadius:
-                BorderRadius.vertical(bottom: Radius.circular(24)),
-                image: DecorationImage(
-                  colorFilter:
-                  ColorFilter.mode(Colors.grey, BlendMode.softLight),
-                  image: NetworkImage(
-                      "https://restaurant-api.dicoding.dev/images/large/${restaurantDetail
-                          .pictureId}"),
-                  fit: BoxFit.cover,
+          Stack(
+            clipBehavior: Clip.hardEdge,
+            children: [
+              Column(
+                children: [
+                  Hero(
+                    tag: restaurantDetail.pictureId,
+                    child: Container(
+                      height: pageHeight / 3,
+                      width: pageWidth,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            BorderRadius.vertical(bottom: Radius.circular(24)),
+                        image: DecorationImage(
+                          colorFilter: ColorFilter.mode(
+                              Colors.grey, BlendMode.softLight),
+                          image: NetworkImage(
+                              "https://restaurant-api.dicoding.dev/images/large/${restaurantDetail.pictureId}"),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 32,
+                  ),
+                ],
+              ),
+              Positioned(
+                bottom: 10,
+                right: 25,
+                child: InkWell(
+                  // borderRadius: BorderRadius.all(Radius.circular(60)),
+                  onTap: () {},
+                  child: ClipOval(
+                    child: Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(40)),
+                          color: Colors.white,
+                          border: Border.all(color: Colors.black, width: 1)),
+                      child: Icon(
+                        Icons.favorite_border,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          SizedBox(
-            height: 32,
+            ],
           ),
           Flexible(
             flex: 2,
@@ -133,10 +142,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                       ),
                       Text(
                         restaurantDetail.rating.toString(),
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .bodyText2,
+                        style: Theme.of(context).textTheme.bodyText2,
                       ),
                     ],
                   )
@@ -165,10 +171,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                   ),
                   Text(
                     '${restaurantDetail.city} City',
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodyText2,
+                    style: Theme.of(context).textTheme.bodyText2,
                   ),
                 ],
               ),
@@ -183,10 +186,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Description',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .subtitle1,
+                style: Theme.of(context).textTheme.subtitle1,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -202,10 +202,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
                 restaurantDetail.description,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 4,
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodyText2,
+                style: Theme.of(context).textTheme.bodyText2,
                 textAlign: TextAlign.justify,
               ),
             ),
@@ -219,10 +216,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Foods Menu',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .subtitle2,
+                style: Theme.of(context).textTheme.subtitle2,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -255,10 +249,7 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Drinks Menu',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .subtitle2,
+                style: Theme.of(context).textTheme.subtitle2,
                 textAlign: TextAlign.start,
               ),
             ),
@@ -288,7 +279,6 @@ class _RestaurantDetailPageState extends State<RestaurantDetailPage> {
     );
   }
 
-  menuCardWidget(restaurantDetail, index, isFood) =>
-      MenuCardWidget(
-          restaurantDetail: restaurantDetail, index: index, isFood: isFood);
+  menuCardWidget(restaurantDetail, index, isFood) => MenuCardWidget(
+      restaurantDetail: restaurantDetail, index: index, isFood: isFood);
 }

@@ -1,66 +1,75 @@
+import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:restaurant_app/common/resto_provider.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
-import 'package:restaurant_app/page/search_page.dart';
-import 'package:restaurant_app/widget/restaurant_list_page.dart';
+import 'package:restaurant_app/common/styles.dart';
+import 'package:restaurant_app/page/dashboard_page.dart';
+import 'package:restaurant_app/page/favorite_page.dart';
+import 'package:restaurant_app/page/restaurant_detail_page.dart';
+import 'package:restaurant_app/page/settings_page.dart';
+import 'package:restaurant_app/utils/notification_helper.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const routeName = '/home_page';
 
   @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final NotificationHelper _notificationHelper = NotificationHelper();
+  int _selectedIndex = 1;
+
+  @override
   Widget build(BuildContext context) {
+    final List<Widget> _screens = [
+      FavoritePage(),
+      DashboardPage(),
+      SettingsPage()
+    ];
     return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: Colors.black,
-              size: 32,
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, SearchPage.routeName);
-            },
-          )
+      bottomNavigationBar: BottomNavyBar(
+        selectedIndex: _selectedIndex,
+        showElevation: true,
+        onItemSelected: onTabTapped,
+        items: [
+          BottomNavyBarItem(
+              icon: Icon(Icons.favorite),
+              title: Text('Favorite'),
+              activeColor: primaryColor),
+          BottomNavyBarItem(
+              icon: Icon(Icons.home_filled),
+              title: Text('Home'),
+              activeColor: primaryColor),
+          BottomNavyBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Settings'),
+              activeColor: primaryColor),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(right: 16, left: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Restaurant',
-                  textAlign: TextAlign.start,
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline4!
-                      .apply(color: Colors.black)),
-              SizedBox(
-                height: 4,
-              ),
-              Text(
-                'Recommendation restaurant for you!',
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1!
-                    .apply(color: Colors.grey),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Flexible(
-                  child: ChangeNotifierProvider<RestaurantProvider>(
-                      create: (_) =>
-                          RestaurantProvider(ApiService(), context),
-                      child: RestaurantListPage())),
-            ],
-          ),
-        ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
       ),
     );
+  }
+
+  void onTabTapped(int index) {
+    setState(
+      () {
+        _selectedIndex = index;
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _notificationHelper
+        .configureSelectNotificationSubject(RestaurantDetailPage.routeName);
+  }
+
+  @override
+  void dispose() {
+    selectNotificationSubject.close();
+    super.dispose();
   }
 }
