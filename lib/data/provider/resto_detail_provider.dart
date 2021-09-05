@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/data/model/restaurant_detail_model.dart';
@@ -23,8 +23,14 @@ class RestaurantDetailProvider extends ChangeNotifier {
   ResultState? get state => _state;
 
   Future<dynamic> _fetchRestaurantDetail() async {
+    var result = await Connectivity().checkConnectivity();
     try {
       _state = ResultState.Loading;
+      if (result == ConnectivityResult.none) {
+        _state = ResultState.NoConnection;
+        notifyListeners();
+        return _message = 'No Internet Connection';
+      }
       notifyListeners();
 
       final detailResto = await apiService.restaurantDetail(id);
@@ -38,15 +44,9 @@ class RestaurantDetailProvider extends ChangeNotifier {
         return _restaurantDetailResult = detailResto;
       }
     } catch (e) {
-      if (e is SocketException) {
-        _state = ResultState.NoConnection;
-        notifyListeners();
-        return _message = 'No Internet Connection';
-      } else {
-        _state = ResultState.Error;
-        notifyListeners();
-        return _message = 'Error --> $e';
-      }
+      _state = ResultState.Error;
+      notifyListeners();
+      return _message = 'Error --> $e';
     }
   }
 }

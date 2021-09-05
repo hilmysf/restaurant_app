@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/data/provider/resto_provider.dart';
 import 'package:restaurant_app/common/styles.dart';
-import 'package:restaurant_app/data/api/api_service.dart';
 import 'package:restaurant_app/utils/result_state.dart';
 import 'package:restaurant_app/widget/no_internet_widget.dart';
 import 'package:restaurant_app/widget/restaurant_list.dart';
 import 'package:restaurant_app/widget/restaurant_search_list.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   static const routeName = '/search_page';
+
+  @override
+  _SearchPageState createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
   final _searchController = TextEditingController();
 
   @override
@@ -93,5 +98,11 @@ class SearchPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

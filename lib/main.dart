@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:android_alarm_manager/android_alarm_manager.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +6,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app/common/styles.dart';
 import 'package:restaurant_app/data/api/api_service.dart';
+import 'package:restaurant_app/data/db/database_helper.dart';
 import 'package:restaurant_app/data/model/restaurant_model.dart';
 import 'package:restaurant_app/data/preferences/preferences_helper.dart';
+import 'package:restaurant_app/data/provider/database_provider.dart';
 import 'package:restaurant_app/data/provider/preferences_provider.dart';
 import 'package:restaurant_app/data/provider/resto_provider.dart';
 import 'package:restaurant_app/data/provider/scheduling_provider.dart';
@@ -51,6 +52,8 @@ class MyApp extends StatelessWidget {
             create: (_) => PreferencesProvider(
                 preferencesHelper: PreferencesHelper(
                     sharedPreferences: SharedPreferences.getInstance()))),
+        ChangeNotifierProvider(
+            create: (_) => DatabaseProvider(databaseHelper: DatabaseHelper())),
         StreamProvider(
           create: (context) => Connectivity().onConnectivityChanged,
           initialData: null,

@@ -4,7 +4,7 @@ import 'package:restaurant_app/data/preferences/preferences_helper.dart';
 class PreferencesProvider extends ChangeNotifier {
   PreferencesHelper preferencesHelper;
 
-  PreferencesProvider({required this.preferencesHelper}){
+  PreferencesProvider({required this.preferencesHelper}) {
     _getDailyReminderPreferences();
   }
 

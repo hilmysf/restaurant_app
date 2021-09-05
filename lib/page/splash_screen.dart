@@ -21,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Timer(
       duration,
       () {
-        Navigator.pushNamed(context, HomePage.routeName);
+        Navigator.pushReplacementNamed(context, HomePage.routeName);
       },
     );
   }
@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
-              Icons.restaurant_menu_rounded,
+              Icons.restaurant,
               color: primaryColor,
               size: 150,
             ),

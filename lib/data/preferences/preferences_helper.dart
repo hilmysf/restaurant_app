@@ -11,7 +11,7 @@ class PreferencesHelper {
     return prefs.getBool(DAILY_REMINDER) ?? false;
   }
 
-  void setDailyReminder(bool value) async{
+  void setDailyReminder(bool value) async {
     final prefs = await sharedPreferences;
     prefs.setBool(DAILY_REMINDER, value);
   }
